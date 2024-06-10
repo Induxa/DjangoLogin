@@ -1,0 +1,109 @@
+{% extends 'faculty/layout.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/faculty_menu.css' %}">
+<link rel="stylesheet" href="{% static 'css/transfer.css' %}">
+<link rel="stylesheet" href="{% static 'css/input_style.css' %}">
+{% endblock %}
+
+{% block menu %}
+<div class="navbar">
+    <a href="{% url 'faculty:faculty_index' faculty_id %}">Главная</a>
+
+    <div class="dropdown">
+        <button class="dropbtn"> {{ name_faculty.NameFaculty }}
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'faculty:logout' %}">Выйти</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% for students in students %}
+<h1>{{ students.Last_name }} {{ students.First_name }} {{ students.Middle_name }} {{ students.GroupStudents }}</h1>
+{% endfor %}
+<table>
+    <thead>
+    <tr>
+        <th>
+            Курс
+        </th>
+        <th>
+            Название работы
+        </th>
+        <th>
+            Тип работа
+        </th>
+        <th>
+            Работа
+        </th>
+        <th>
+            Статус
+        </th>
+        <!--        <th>-->
+        <!--            Консультант-->
+        <!--        </th>-->
+    </tr>
+    </thead>
+    <tbody>{% for themes in themes %}
+    {% if themes.Files != None %}
+    <tr>
+        <td>
+            {{ themes.Course }} курс
+        </td>
+        <td>
+            {{ themes.Name_themes }}
+        </td>
+        <td>
+            {{ themes.Types_work }}
+        </td>
+        <td>
+            <form action="{% url 'faculty:download' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                <button type="submit" name="download" value="{{ themes.Files }}">{{ themes.Files }}</button>
+            </form>
+        </td>
+        <td>
+            {% if themes.statuc == True %}
+            Сдано
+            {% elif themes.statuc == False %}
+            Не сдано
+            {% endif %}
+        </td>
+    </tr>
+    {% elif themes.Files == None %}
+    <tr>
+        <td>
+             {{ themes.Course }} курс
+        </td>
+        <td>
+            {{ themes.Name_themes }}
+        </td>
+        <td>
+            {{ themes.Types_work }}
+        </td>
+        <td>
+            <form action="{% url 'faculty:download' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                <button type="submit" name="download" value="{{ themes.Files }}">{{ themes.Files }}</button>
+            </form>
+        </td>
+        <td>
+            {% if themes.statuc == True %}
+            Сдано
+            {% elif themes.statuc == False %}
+            Не сдано
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

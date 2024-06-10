@@ -1,0 +1,50 @@
+/* Общие стили для таблицы */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Стили для заголовков таблицы */
+th {
+  background-color: #f2f2f2;
+  color: #333;
+  font-weight: bold;
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+/* Стили для строк таблицы */
+td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+/* Стили для input */
+input[type="text"], select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Стили для кнопок */
+button[type="submit"] {
+    margin-bottom: 15px;
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.transfer_st{
+    color: red;
+}

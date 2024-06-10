@@ -1,0 +1,97 @@
+{% extends 'faculty/layout.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/faculty_menu.css' %}">
+<link rel="stylesheet" href="{% static 'css/graph.css' %}">
+<link rel="stylesheet" href="{% static 'css/transfer.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block menu %}
+<div class="navbar">
+    <a href="{% url 'faculty:faculty_index' faculty_id %}">Главная</a>
+
+    <div class="dropdown">
+        <button class="dropbtn"> {{ name_faculty.NameFaculty }}
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'faculty:logout' %}">Выйти</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block btn %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="tables_form">
+        <table>
+            <thead>
+            <tr>
+                <th>
+                    Группа
+                </th>
+                <th>
+                    Сдача курсовых
+                </th>
+                <th>
+                    Сдача практик
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <form action="{% url 'faculty:graph' faculty_id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for group in groups %}
+                <tr>
+                    <td>
+                        <input type="text" name="group_{{ group.id }}" value="{{ group.NameGroup }}">
+                    </td>
+                    <td>
+                        <input type="date" name="dateCourse_{{ group.id }}">
+                    </td>
+                    <td>
+                        <input type="date" name="datePractice_{{ group.id }}">
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>
+                        <button type="submit">Отправить</button>
+                    </td>
+                </tr>
+            </form>
+            </tbody>
+
+        </table>
+    </div>
+    <div class="tables_form">
+        <table>
+            <thead>
+            <tr>
+                <th>Группа</th>
+                <th>Сроки сдачи работ (Курсовая)</th>
+                <th>Сроки сдачи работ (Практика)</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for group_name, times in grouped_times.items %}
+            <tr>
+                <td>{{ group_name }}</td>
+                <td>{{ times.Курсовая }}</td>
+                <td>{{ times.Практика }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

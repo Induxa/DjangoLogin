@@ -1,0 +1,218 @@
+{% extends 'faculty/layout.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/faculty_menu.css' %}">
+<link rel="stylesheet" href="{% static 'css/faculty_btn.css' %}">
+<link rel="stylesheet" href="{% static 'css/faculty_modal.css' %}">
+<link rel="stylesheet" href="{% static 'css/faculty_content.css' %}">
+<link rel="stylesheet" href="{% static 'css/input_style.css' %}">
+{% endblock %}
+
+{% block menu %}
+<div class="navbar">
+    <a href="{% url 'faculty:graph' faculty_id %}">График</a>
+    <a href="{% url 'faculty:transfer' faculty_id %}">Перевод</a>
+    <a href="{% url 'faculty:faculty_students' faculty_id %}">Студенты</a>
+
+    <div class="dropdown">
+        <button class="dropbtn"> {{ id.NameFaculty }}
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'faculty:logout'  %}">Выйти</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block btn %}
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Добавить файл</h2>
+        <form action="{% url 'faculty:parsing' faculty_id %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+            {{ files.Files }}
+            <button type="submit">Загрузить</button>
+        </form>
+    </div>
+</div>
+
+<!-- Модальное окно для отчета -->
+<div id="reportModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="reportModalClose">&times;</span>
+        <h2>Отчет</h2>
+        <form action="{% url 'faculty:Report' faculty_id %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <select class="groupBtn" name="select" id="report_group">
+                {% for group in group %}
+                <option>
+                    {{ group.NameGroup }}
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+</div>
+
+<!-- Модальное окно для архивов -->
+<div id="archiveModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="archiveModalClose">&times;</span>
+        <h2>Архивы</h2>
+        <label for="archive_group">Выгрузка по группе</label>
+        <form action="{% url 'faculty:archive' faculty_id %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <select class="groupBtn" name="select" id="archive_group">
+                {% for group in group %}
+                <option>
+                    {{ group.NameGroup }}
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit">Отправить</button>
+        </form>
+        <label for="student_fullname">По студенту</label>
+        <form action="{% url 'faculty:archive' faculty_id %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <input type="text" class="find_student" name="student_fullname" id="student_fullname"><br>
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+</div>
+
+<div class="btn_positon">
+    <button class="btn_left" id="ModalReport">Отчёт</button>
+    <button class="btn_left" id="ModalArchive">Архивы</button>
+    <button class="btn_left" id="openModal">Добавить</button>
+    <!--    <button class="btn_right" id="editButton">Изменить</button>-->
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <h5>Вывести данные: </h5>
+    <input type="radio" class="form-check-input" name="data_type" id="all_date_id" value="all" checked> <label
+        for="all_date_id">Все данные</label>
+    <input type="radio" class="form-check-input" name="data_type" id="groups_id" value="group"> <label for="groups_id">Данные
+    по группе</label>
+    <input type="radio" class="form-check-input" name="data_type" id="student_id" value="student"> <label
+        for="student_id">Данные по студенту</label>
+</div>
+
+<div class="all_date_student" style="display: none;">
+    <form action="{{ id.get_absolut_url }}" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <button type="submit" name="get_data">Вывести все данные</button>
+    </form>
+</div>
+
+<div class="group_select" style="display: none;">
+    <form action="{{ id.get_absolut_url }}" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <select class="groupBtn" name="select">{% for group in group %}
+            <option>{{ group.NameGroup }}</option>
+            {% endfor %}</select>
+        <button type="submit" name="get_data">Вывести данные</button>
+    </form>
+</div>
+
+<div class="student_input" style="display: none;">
+    <form action="{{ id.get_absolut_url }}" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <input type="text" class="find_student" name="student_fullname"><br>
+        <button type="submit" name="get_data">Вывести данные</button>
+    </form>
+</div>
+
+{% for st in course %}
+<input value="{{ st.Name_themes }}" size="35">
+<input value="{{ st.Students_Themes }}" size="35">
+<input type="text" value="{{ st.get_Status_themes_display }}">
+<button name="files" value="{{ st.Course }}">{{ st.Course }}</button><br>
+{% endfor %}
+
+<div class="container-fluid ">
+    <form action="{{ id.get_absolut_url }}" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div class="row">
+            <div class="position_left text-field ">
+                <div class="scroll-table">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th class="Group">Группа</th>
+                            <th class="Full_name">ФИО</th>
+                            <th class="Themes">Статус</th>
+                            <th class="Work">Работы</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="scroll-table-body">
+                    <table>
+                        <tbody>
+                        {% for student in student %}
+                        <tr>
+                            <td><input type="text" name="groupStudents"
+                                       class="text-field__input student-{{ student.id }}"
+                                       value="{{ student.GroupStudents }}"
+                                       size="43"
+                            ></td>
+                            <td><input type="text" name="full_name"
+                                       class="text-field__input student-{{ student.id }}"
+                                       disabled
+                                       size="44"
+                                       value="{{ student.Last_name }} {{ student.First_name }} {{ student.Middle_name }}">
+                            </td>
+                            <td>
+                                <input type="text"
+                                       class="text-field__input student-{{ student.id }}"
+                                       disabled
+                                       size="44"
+                                       value="{{ student.get_Status_Students_display }}">
+                            </td>
+                            <td>
+                                <form action="{{ id.get_absolut_url }}" method="post" enctype="multipart/form-data">
+                                    {%csrf_token%}
+                                    <button type="submit" class="button-style_font"
+                                            name="student_work" value="{{ student.id }}">Работы
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--        <button type="submit" id="saveButton" style="display: none;">Сохранить</button>-->
+    </form>
+</div>
+
+<div id="openModalReport" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Название</h3>
+                <a href="#close" id="close" title="Close" class="close">×</a>
+            </div>
+            <div class="modal-body">
+                <p>Содержимое модального окна...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'JS/addModalFile.js' %}"></script>
+<script src="{% static 'JS/database.js' %}"></script>
+<script src="{% static 'JS/content.js' %}"></script>
+
+{% endblock %}

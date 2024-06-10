@@ -1,0 +1,83 @@
+.container {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.tables_form {
+    flex: 1;
+    margin-right: 10px;
+    width: 45%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+thead {
+    background-color: #f2f2f2;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+input[type="text"], input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px; /* Увеличение размера шрифта */
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #fff;
+    height: 45px; /* Увеличение высоты */
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: block;
+    width: 24px; /* Увеличение размера иконки календаря */
+    height: 24px;
+    padding: 5px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    cursor: pointer;
+}
+
+input[type="date"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}

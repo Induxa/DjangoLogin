@@ -1,0 +1,92 @@
+{% extends 'faculty/layout.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/faculty_menu.css' %}">
+<!--<link rel="stylesheet" href="{% static 'css/faculty_content.css' %}">-->
+<link rel="stylesheet" href="{% static 'css/input_style.css' %}">
+<link rel="stylesheet" href="{% static 'css/transfer.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block menu %}
+<div class="navbar">
+    <a href="{% url 'faculty:faculty_index' faculty_id %}">Главная</a>
+    <div class="dropdown">
+        <button class="dropbtn"> {{ name_faculty.NameFaculty }}
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'faculty:logout' %}">Выйти</a>
+        </div>
+    </div>
+</div>
+
+<form action="{% url 'faculty:faculty_students' faculty_id %}" method="post" enctype="multipart/form-data">
+    {% csrf_token%}
+    <input type="radio" name="status" value="1"> Бакалавриат
+    <input type="radio" name="status" value="4"> Магистратура
+    <input type="radio" name="status" value="3"> Академический
+    <input type="radio" name="status" value="5"> Выпускники
+    <input type="radio" name="status" value="2"> Отчисленные
+    <button type="submit">Вывести</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div id="student-list">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Статус</th>
+            <th>Работы</th>
+        </tr>
+        </thead>
+        <tbody>{% for student in students %}
+        <tr>
+            <td>
+                <input type="text" value="{{ student.Last_name }}">
+            </td>
+            <td>
+                <input type="text" value="{{ student.First_name }}">
+            </td>
+            <td>
+                <input type="text" value="{{ student.Middle_name }}">
+            </td>
+            <td>
+                <input type="text" value="{{ student.get_Status_Students_display }}">
+            </td>
+            <td>
+                <form action="{% url 'faculty:faculty_students' faculty_id %}" method="post" enctype="multipart/form-data">{%csrf_token%}
+                    <input type="submit" class="button-style_font"
+                           name="student_work" value="{{ student.id }}" placeholder="Работы">
+                </form>
+            </td>
+            <!--            <td>-->
+            <!--                <select class="select__input" disabled>-->
+            <!--                    {% if student.get_Status_Students_display %}-->
+            <!--                    <option>-->
+            <!--                        Учится-->
+            <!--                    </option>-->
+            <!--                    <option>-->
+            <!--                        Отчислен-->
+            <!--                    </option>-->
+            <!--                    {% else %}-->
+            <!--                    <option>-->
+            <!--                        Отчислен-->
+            <!--                    </option>-->
+            <!--                    <option>-->
+            <!--                        Учится-->
+            <!--                    </option>-->
+            <!--                    {% endif %}-->
+            <!--                </select>-->
+            <!--            </td>-->
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

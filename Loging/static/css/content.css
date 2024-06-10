@@ -1,0 +1,24 @@
+.Course {
+    display: none;
+}
+
+.Practic {
+    display: none;
+}
+
+.Course{
+    display: flex;
+    align-items: center;
+}
+.Practic{
+    display: flex;
+    align-items: center;
+}
+
+.Course h4{
+    margin-right: 10px;
+}
+
+.Practic h4{
+    margin-right: 10px;
+}

@@ -1,0 +1,31 @@
+{% extends 'autoriz/layout.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">{% endblock %}
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+
+<div class="login-form">
+	<div class="login">
+		<img src="{% static 'images/AGU.png' %}" alt="icons" class="icon_img">
+
+		<form action="{% url 'index' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+			{{ User.login }}
+
+			{{ User.password }}
+
+			<button type="submit" class="login_button">Button</button>
+
+		</form>
+
+		{% if User.errors %}
+			<p>{{ errors }}</p>
+		{% endif %}
+
+	</div>
+</div>
+
+{% endblock %}

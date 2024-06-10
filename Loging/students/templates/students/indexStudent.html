@@ -1,0 +1,155 @@
+{% extends 'students/layoutStudent.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/tab.css' %}">
+<link rel="stylesheet" href="{% static 'css/content.css' %}">
+<link rel="stylesheet" href="{% static 'css/table.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+{% endblock %}
+
+{% block navbar %}
+<div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Профиль</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <button class="btn btn-outline-success">Logout
+                        <!--                        <img class="icons" src="{% static 'Icons/users.ico' %}">-->
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+{{ student.GroupStudents }}
+{% if student.EmailStudents == None %}
+<h5>Введите почту</h5>
+<form action="{{ student.get_absolut_url }}" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <input type="email" name="email_st">
+    <button type="submit">Сохранить почту</button>
+</form>
+{% else %}
+{{ student.EmailStudents }}
+{% endif %}
+{{ student.get_Status_Students_display }}
+<h3>{{ student.Last_name }} {{ student.First_name }} {{ student.Middle_name }}</h3>
+<div>
+<!--    {% for st in students %}-->
+<!--    {% if '4' in student.GroupStudents.NameGroup %}-->
+<!--    <form action="{{ student.get_absolut_url }}" method="post" enctype="multipart/form-data">{% csrf_token %}-->
+<!--        <div class="Course">-->
+<!--            <h4>Курсовая:</h4>-->
+<!--            {{ Course.File_Course }}-->
+<!--            <button type="submit" name="course_sem" value="{{ student.GroupStudents }}_1">Сохранить</button>-->
+<!--        </div>-->
+<!--    </form>-->
+<!--    <form action="{{ student.get_absolut_url }}" method="post" enctype="multipart/form-data">{% csrf_token %}-->
+<!--        <div class="Practic">-->
+<!--            <h4>Практика:</h4>-->
+<!--            {{ Practice.File_Practice }}-->
+<!--            <button type="submit" name="practice_sem" value="{{ student.GroupStudents }}_2">Сохранить</button>-->
+<!--        </div>-->
+<!--    </form>-->
+<!--    <form action="{{ student.get_absolut_url }}" method="post" enctype="multipart/form-data">{% csrf_token %}-->
+<!--        <div class="Practic">-->
+<!--            <h4>ВКР:</h4>-->
+<!--            {{ WKR.File_WKR }}-->
+<!--            <button type="submit" name="wkr_sem" value="{{ student.GroupStudents }}_3">Сохранить</button>-->
+<!--        </div>-->
+<!--    </form>-->
+<!--    {% else %}-->
+<!--    <form action="{{ student.get_absolut_url }}" method="post" enctype="multipart/form-data">{% csrf_token %}-->
+<!--        <div class="Course">-->
+<!--            <h4>Курсовая:</h4>-->
+<!--            {{ Course.File_Course }}-->
+<!--            <button type="submit" name="course_sem" value="{{ student.GroupStudents }}_1">Сохранить</button>-->
+<!--        </div>-->
+<!--    </form>-->
+<!--    <form action="{{ student.get_absolut_url }}" method="post" enctype="multipart/form-data">{% csrf_token %}-->
+<!--        <div class="Practic">-->
+<!--            <h4>Практика:</h4>-->
+<!--            {{ Practice.File_Practice }}-->
+<!--            <button type="submit" name="practice_sem" value="{{ student.GroupStudents }}_2">Сохранить</button>-->
+<!--        </div>-->
+<!--    </form>-->
+<!--    {% endif %}-->
+<!--    {% endfor %}-->
+
+<h4>Все работы</h4>
+<table>
+    <thead>
+    <tr>
+        <th>
+            Куср
+        </th>
+        <th>
+            Тип работы
+        </th>
+        <th>
+            Тема курсовой
+        </th>
+        <th>
+            Файл
+        </th>
+    </tr>
+    </thead>
+    <tbody>{% for themes in themes %}
+    <tr>
+        <td>
+            {{ themes.Semester }}
+        </td>
+        <td>
+            {{ themes.get_Status_themes_display }}
+        </td>
+        <td>
+            {% if themes.get_Status_themes_display == "Практика" %}
+
+            {% elif themes.get_Status_themes_display == "Курсовая" %}
+            {{ themes.Name_themes }}
+            {% endif %}
+        </td>
+        <td>
+            <form action="{% url 'students:download' id %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                <button type="submit" name="course" value="{{ themes.Course }}">{{ themes.Course }}</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!--<input type="radio">-->
+
+<!--<a href="#" download="{{ student.Themes.Semester_Course.Course }}">-->
+<!--{{ student.Themes.Semester_Course.Course }}</a>-->
+<!--<a href="#" download="{{ student.Themes.Semester_Course.Practice }}">-->
+<!--{{ student.Themes.Semester_Practice.Practice }}</a>-->
+
+
+{% endblock %}
+
+{% block JS %}
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<!--<script src="{% static 'JS/Course.js' %}"></script>-->
+<script src="{% static 'JS/files_load.js' %}"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+{% endblock %}

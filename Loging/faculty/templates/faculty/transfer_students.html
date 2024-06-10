@@ -1,0 +1,171 @@
+{% extends 'faculty/layout.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/faculty_menu.css' %}">
+<!--<link rel="stylesheet" href="{% static 'css/faculty_content.css' %}">-->
+<link rel="stylesheet" href="{% static 'css/input_style.css' %}">
+<link rel="stylesheet" href="{% static 'css/transfer.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block menu %}
+<div class="navbar">
+    <a href="{% url 'faculty:faculty_index' faculty_id %}">Главная</a>
+    <div class="dropdown">
+        <button class="dropbtn"> {{ id.NameFaculty }}
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'faculty:logout' %}">Выйти</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Перевод студентов</h1>
+
+<!--<div class="group_x">-->
+<!--    <form action="{% url 'faculty:transfer' faculty_id %}" method="post" enctype="multipart/form-data">{% csrf_token %}-->
+<!--        <select name="select">{% for group in groups %}-->
+<!--            <option>{{ group.NameGroup }}</option>-->
+<!--            {% endfor %}</select>-->
+<!--        <button type="submit">Вывести данные</button>-->
+<!--    </form>-->
+<!--</div>-->
+
+{% for group in name_group %}
+<div class="group_name_find">
+    <form action="{% url 'faculty:transfer' faculty_id %}" method="post"
+          enctype="multipart/form-data">{% csrf_token %}
+        <button type="submit" name="group_view" value="{{ group }}">{{ group }}</button>
+    </form>
+</div>
+{% endfor %}
+
+{% for gt in groups %}
+<div class="group_find">
+    <form action="{% url 'faculty:transfer' faculty_id %}" method="post"
+          enctype="multipart/form-data">{% csrf_token %}
+        <button type="submit" name="group_find" value="{{ gt }}">{{ gt }}</button>
+    </form>
+</div>
+{% endfor %}
+
+<!--{% for student in students %}-->
+<!--{{ student.Last_name }} {{ student.First_name }}-->
+<!--{% endfor %}-->
+<table>
+    <tbody>
+    <form id="transferForm" action="{% url 'faculty:transfer' faculty_id %}" method="post"
+          enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for student in students %}
+        <tr>
+            <td>
+                <input type="text" name="group_{{ student.id }}" value="{{ student.GroupStudents }}" size="2">
+            </td>
+            <td>
+                <input type="text" name="st_{{ student.id }}"
+                       value="{{ student.Last_name }} {{ student.First_name }} {{ student.Middle_name }}">
+            </td>
+            <td>
+                <select name="status_{{ student.id }}">
+                    <option>
+                        {{ student.get_Status_Students_display }}
+                    </option>
+                    {% for key, value in student.Status.items %}
+                    {% if key != student.Status_Students and key != '5' %}
+                    <option value="{{ key }}">{{ value }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td><input type="submit" class="transfer_st" name="get_data"></td>
+        </tr>
+    </form>
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+    $('button[name="group_view"]').on('change', function() {
+        var status = $(this).val();
+        $.ajax({
+            url: '{% url 'faculty:transfer' faculty_id %}',
+            method: 'GET',
+            data: {
+                'status': status
+            },
+            success: function(data) {
+                $('#student-list').html(data);
+            }
+        });
+    });
+    $('input[name="status"]:checked').trigger('change');
+});
+</script>
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", function() {-->
+<!--        // Получаем все кнопки group_view-->
+<!--        var groupViewButtons = document.querySelectorAll('.group_name_find button[type="submit"]');-->
+
+<!--        // Назначаем обработчик события на клик для каждой кнопки group_view-->
+<!--        groupViewButtons.forEach(function(button) {-->
+<!--            button.addEventListener('click', function(event) {-->
+<!--                event.preventDefault(); // Предотвращаем отправку формы по умолчанию-->
+
+<!--                // Получаем значение атрибута value кнопки group_view-->
+<!--                var groupValue = this.value;-->
+
+<!--                // Отправляем асинхронный запрос на сервер с помощью AJAX-->
+<!--                var xhr = new XMLHttpRequest();-->
+<!--                xhr.open('POST', '{% url 'faculty:transfer' faculty_id %}', true);-->
+<!--                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');-->
+<!--                xhr.onload = function () {-->
+<!--                    if (xhr.status >= 200 && xhr.status < 300) {-->
+<!--                        // Парсим полученный JSON-ответ-->
+<!--                        var response = JSON.parse(xhr.responseText);-->
+
+<!--                        // Перебираем полученные кнопки group_find и отображаем их-->
+<!--                        response.forEach(function(groupFindButtonValue) {-->
+<!--                            var groupFindButton = document.querySelector('.group_find button[value="' + groupFindButtonValue + '"]');-->
+<!--                            if (groupFindButton) {-->
+<!--                                groupFindButton.closest('.group_find').style.display = 'block';-->
+<!--                            }-->
+<!--                        });-->
+<!--                    } else {-->
+<!--                        console.error('Request failed');-->
+<!--                    }-->
+<!--                };-->
+<!--                xhr.onerror = function () {-->
+<!--                    console.error('Request failed');-->
+<!--                };-->
+<!--                xhr.send('group_value=' + groupValue);-->
+<!--            });-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+<!--<script>-->
+<!--    var button = document.getElementById("transferButton").onclick = function() {-->
+<!--        var group = document.querySelector('input[name="group"]').value;-->
+<!--        console.log(group);-->
+<!--        if (!button.value) {-->
+<!--            button.value = group;-->
+<!--            console.log('True');-->
+<!--        }-->
+<!--    };-->
+<!--</script>-->
+{% endblock %}
+
+
+
